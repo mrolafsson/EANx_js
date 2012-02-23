@@ -17,7 +17,7 @@
 					Planned depth exceeds maximum operating depth!<br/>
                     Change plan to shallower <a href="#" onclick="depth(mod());">depth</a> or choose a more <a href="#" onclick="eanx(EANx.bestMix(ppo2(), depth()));">suitable</a> gas mixture.
 				</div>
-				<label for="depth">depth</label><input type="number" name="depth" value="18" id="depth">
+				<label for="depth">depth</label><input type="number" name="depth" value="18" id="depth"> m.
                 <div class="slack" style="display: none;">
                     <a href="#" onclick="maximiseDepth();">Max</a>
                 </div>
@@ -28,14 +28,14 @@
 					Actual Bottom Time exceeds the No Decompression Limit!<br/>
                     Plan for a <a href="#" onclick="abt(ndl());">shorter</a> dive or choose a more <a href="#" onclick="eanx(EANx.bestMix(ppo2(), depth()));">suitable</a> gas mixture.
 				</div>
-				<label for="abt">abt</label><input type="number" name="abt" value="60" id="abt">
+				<label for="abt">abt</label><input type="number" name="abt" value="60" id="abt"> <span class="clock"></span>
                 <div class="slack" style="display: none;">
                     <a href="#" onclick="maximiseAbt();">Max</a>
                 </div>
 			</section>
 
             <section class="ndl">
-				<label for="ndl">ndl</label><input type="number" name="ndl" value="" id="ndl" readonly>
+				<label for="ndl">ndl</label><input type="number" name="ndl" value="" id="ndl" readonly> <span class="clock"></span>
 			</section>
 
             <section class="ppo2_at_depth">
@@ -65,7 +65,7 @@
 			</section>
 			
 			<section class="mod">
-				<label for="mod">mod</label><input type="number" name="mod" value="" id="mod" readonly>
+				<label for="mod">mod</label><input type="number" name="mod" value="" id="mod" readonly> m.
 			</section>
 		</div>
 		

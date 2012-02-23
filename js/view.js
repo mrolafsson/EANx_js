@@ -31,6 +31,8 @@ function results() {
     $('#cnsfrac').val(cns.toFixed(2) * 100);
 
     $('#ndl').val(ndl().toFixed(0));
+    $('#ndl').siblings('span.clock').html(minsToHM(ndl()));
+    $('#abt').siblings('span.clock').html(minsToHM(abt()));
 
     tooLong(ndl() < abt());
     tooDeep(depth() > mod());
@@ -86,6 +88,7 @@ function maximiseDepth() {
 function abt(abt) {
     if (abt) {
         $('#abt').val(abt).change();
+        $('#abt').siblings('span.clock').html(minsToHM(abt));
     }
     return parseInt($('#abt').val());
 }
@@ -121,4 +124,8 @@ function tooLong(state) {
             $('section.abt .slack').show();
         }
     }
+}
+
+function minsToHM(mins) {
+    return Math.floor(mins / 60) + 'h ' + (mins % 60) + 'm';
 }
