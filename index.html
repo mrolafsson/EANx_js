@@ -1,0 +1,73 @@
+<html>
+	<head>
+		<title></title>
+        <link rel="stylesheet" href="css/view.css">
+		<script type="text/javascript" charset="utf-8" src="js/jquery-1.6.4.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/algo.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/view.js"></script>
+	</head>
+	<body>
+		<h1 id="nitrox">Recreational Nitrox Calculator</span></h1>
+		
+		<div class="plan">
+			<h2>Plan</h2>
+		
+			<section class="depth">
+				<div class="warning" style="display: none;">
+					Planned depth exceeds maximum operating depth!<br/>
+                    Change plan to shallower <a href="#" onclick="depth(mod());">depth</a> or choose a more <a href="#" onclick="eanx(EANx.bestMix(ppo2(), depth()));">suitable</a> gas mixture.
+				</div>
+				<label for="depth">depth</label><input type="number" name="depth" value="18" id="depth">
+                <div class="slack" style="display: none;">
+                    <a href="#" onclick="maximiseDepth();">Maximize</a>
+                </div>
+			</section>
+
+            <section class="abt">
+				<div class="warning" style="display: none;">
+					Actual Bottom Time exceeds the No Decompression Limit!<br/>
+                    Plan for a <a href="#" onclick="abt(ndl());">shorter</a> dive or choose a more <a href="#" onclick="eanx(EANx.bestMix(ppo2(), depth()));">suitable</a> gas mixture.
+				</div>
+				<label for="abt">abt</label><input type="number" name="abt" value="60" id="abt">
+                <div class="slack" style="display: none;">
+                    <a href="#" onclick="maximiseAbt();">Maximize</a>
+                </div>
+			</section>
+
+            <section class="ndl">
+				<label for="ndl">ndl</label><input type="number" name="ndl" value="" id="ndl" readonly>
+			</section>
+
+            <section class="ppo2_at_depth">
+				<label for="ppo2_at_depth">ppo2_at_depth</label><input type="number" name="ppo2_at_depth" value="" id="ppo2_at_depth" readonly>
+			</section>
+
+            <section class="cnsfrac">
+				<label for="cnsfrac">cns%</label><input type="number" name="cnsfrac" value="" id="cnsfrac" readonly>
+			</section>
+            
+		</div>
+		
+		<div class="gas">
+			<h2>Gas</h2>
+			
+			<section class="ppo2">
+				<a href="#" onclick="ppo2(1.4);">1.4</a> <a href="#" onclick="ppo2(1.6);">1.6</a>
+				<label for="ppo2">ppo2</label><input type="number" name="ppo2" value="1.4" id="ppo2" step="0.1">
+			</section>
+			
+			<section class="eanx">
+                <div class="warning" style="display: none;">
+					Choose a more <a href="#" onclick="eanx(EANx.bestMix(ppo2(), depth()));">suitable</a> gas mixture!
+				</div>
+				<a href="#" onclick="eanx(21);">21</a> <a href="#" onclick="eanx(32);">32</a> <a href="#" onclick="eanx(36);">36</a> <a href="#" onclick="eanx(EANx.bestMix(ppo2(), depth()));">Optimize</a>
+				<label for="eanx">eanx</label><input type="number" name="eanx" value="21" id="eanx">
+			</section>
+			
+			<section class="mod">
+				<label for="mod">mod</label><input type="number" name="mod" value="" id="mod" readonly>
+			</section>
+		</div>
+		
+	</body>
+</html>
