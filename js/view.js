@@ -74,7 +74,7 @@ function depth(depth) {
 }
 
 function depthHasSlack() {
-    return EANx.ndl(depth() + 1, eanx()) > abt() && mod() < depth();
+    return EANx.ndl(depth() + 1, eanx()) > abt() && mod() > depth();
 }
 
 function maximiseDepth() {
@@ -120,13 +120,5 @@ function tooLong(state) {
         if (abtHasSlack()) {
             $('section.abt .slack').show();
         }
-    }
-}
-
-function tooRich(state) {
-    if (state) {
-        $('section.eanx .warning').show();
-    } else {
-        $('section.eanx .warning').hide();
     }
 }
