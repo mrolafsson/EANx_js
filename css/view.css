@@ -1,3 +1,16 @@
+h1 {
+    font-size: 3.2em;
+}
+
+input {
+    /*font-size: 3em;*/
+}
+
+/*input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {*/
+    /*-webkit-appearance: none;*/
+    /*margin: 0;*/
+/*}*/
+
 .warning {
     color: orange;
 }
