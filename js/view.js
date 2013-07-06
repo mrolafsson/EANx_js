@@ -24,11 +24,11 @@ function init() {
 }
 
 function results() {
-    var ppo2_at_depth = ((depth() + 10) / 10 * eanx() / 100).toFixed(2);
+    var ppo2_at_depth = EANx_js.ppo2(depth(), eanx());
     $('#ppo2_at_depth').val(ppo2_at_depth);
 
-    var cns = EANx.cns(abt(), ppo2_at_depth);
-    $('#cnsfrac').val(cns.toFixed(2) * 100);
+    var cns = EANx_js.cns(abt(), ppo2_at_depth);
+    $('#cnsfrac').val(cns);
 
     $('#ndl').val(ndl().toFixed(0));
     $('#ndl').siblings('span.clock').html(minsToHM(ndl()));
@@ -39,12 +39,12 @@ function results() {
 }
 
 function calcMod() {
-    var mod = ((ppo2() * 10) / (eanx() / 100)) - 10;
+    var mod = ((ppo2() * 10) / (eanx())) - 10;
     $('#mod').val(Math.floor(mod));
 }
 
 function ndl() {
-    return EANx.ndl(depth(), eanx());
+    return EANx_js.ndl(depth(), eanx());
 }
 
 function ppo2(ppo2) {
@@ -58,7 +58,7 @@ function eanx(eanx) {
     if (eanx) {
         $('#eanx').val(eanx).change();
     }
-    return parseInt($('#eanx').val());
+    return parseInt($('#eanx').val() / 100);
 }
 
 function mod(mod) {
@@ -76,7 +76,7 @@ function depth(depth) {
 }
 
 function depthHasSlack() {
-    return EANx.ndl(depth() + 1, eanx()) > abt() && mod() > depth();
+    return EANx_js.ndl(depth() + 1, eanx()) > abt() && mod() > depth();
 }
 
 function maximiseDepth() {

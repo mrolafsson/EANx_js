@@ -1,4 +1,11 @@
-var EANx = (function (eanx) {
+/**
+ * EANX_js 1.0
+ *
+ * @author http://twitter.com/mrolafsson
+ *
+ */
+var EANx_js = (function (eanx_js) {
+    'use strict';
 
     var dsatRDP = [
         [5, 30.42],
@@ -36,7 +43,7 @@ var EANx = (function (eanx) {
         [498.0, 12.9],
         [635.0, 12.7]
     ];
-	
+
     var buhlmannZHL16_B = [
         [4.0, 32.4],
         [5.0, 29.6],
@@ -58,26 +65,26 @@ var EANx = (function (eanx) {
     ];
 
     var slope = {
-        5 : -1800, 6 : -1500, 7 : -1200, 8 : -900, 9 : -600, 10 : -600, 11 : -300, 12 : -300, 13 : -300, 14 : -300, 15 : -750, 16 : -750
+        5: -1800, 6: -1500, 7: -1200, 8: -900, 9: -600, 10: -600, 11: -300, 12: -300, 13: -300, 14: -300, 15: -750, 16: -750
     };
     var intercept = {
-        5 : 1800, 6 : 1620, 7 : 1410, 8 : 1170, 9 : 900, 10 : 900, 11 : 570, 12 : 570, 13 : 570, 14 : 570, 15 : 1245, 16 : 1245
+        5: 1800, 6: 1620, 7: 1410, 8: 1170, 9: 900, 10: 900, 11: 570, 12: 570, 13: 570, 14: 570, 15: 1245, 16: 1245
     };
 
-    eanx.ppo2 = function(depth, o2frac) {
-        return ((depth() + 10) / 10 * eanx() / 100);
-    }
+    eanx_js.ppo2 = function (depth, o2frac) {
+        return (depth + 10) / 10 * o2frac;
+    };
 
-    eanx.bestMix = function(ppo2, depth) {
-        return Math.floor((( ppo2 *10 ) / ( parseFloat(depth) + 10 )) * 100);
-    }
+    eanx_js.mod = function (ppo2, o2frac) {
+        return Math.floor((((ppo2 * 10) / o2frac) - 10) * 10) / 10;
+    };
 
-    eanx.ndl = function(depth, o2frac) {
+    eanx_js.ndl = function (depth, o2frac) {
         var pamb = depth + 10;
         var ndl = 1000;
         var compartments = buhlmannZHL16_B;
-        var pi = (pamb - 0.627) * (1 - o2frac / 100);
-        var po = (10 - 0.627) * (1 - o2frac / 100);
+        var pi = (pamb - 0.627) * (1 - o2frac);
+        var po = (10 - 0.627) * (1 - o2frac);
 
         for (var i = 0; i < compartments.length; i++) {
             var ht = compartments[i][0];
@@ -90,13 +97,18 @@ var EANx = (function (eanx) {
         }
 
         return Math.floor(ndl);
-    }
+    };
 
-    eanx.cns = function(abt, ppo2) {
+    eanx_js.cns = function(abt, ppo2) {
         var ppo2_to_use = Math.floor(ppo2 * 10 + 0.5);
-        return abt / (slope[ppo2_to_use] * ppo2 + intercept[ppo2_to_use]);
-    }
+        var cns = abt / (slope[ppo2_to_use] * ppo2 + intercept[ppo2_to_use]);
+        return Math.ceil(cns * 100) / 100;
+    };
 
-    return eanx;
+    eanx_js.best_mix = function (depth, ppo2) {
+        return Math.floor((( ppo2 *10 ) / ( parseFloat(depth) + 10 )) * 100) / 100;
+    };
 
-})(EANx || {});
+    return eanx_js;
+
+})(EANx_js || {});

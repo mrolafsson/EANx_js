@@ -1,73 +1,147 @@
-<html>
-	<head>
-		<title></title>
-        <link rel="stylesheet" href="css/view.css">
-		<script type="text/javascript" charset="utf-8" src="js/jquery-1.6.4.min.js"></script>
-        <script type="text/javascript" charset="utf-8" src="js/algo.js"></script>
-        <script type="text/javascript" charset="utf-8" src="js/view.js"></script>
-	</head>
-	<body>
-		<h1 id="nitrox">Recreational Nitrox Calculator</span></h1>
-		
-		<div class="plan">
-			<h2>Plan</h2>
-		
-			<section class="depth">
-				<div class="warning" style="display: none;">
-					Planned depth exceeds maximum operating depth!<br/>
-                    Change plan to shallower <a href="#" onclick="depth(mod());">depth</a> or choose a more <a href="#" onclick="eanx(EANx.bestMix(ppo2(), depth()));">suitable</a> gas mixture.
-				</div>
-				<label for="depth">depth</label><input type="number" name="depth" value="18" id="depth"> m.
-                <div class="slack" style="display: none;">
-                    <a href="#" onclick="maximiseDepth();">Max</a>
-                </div>
-			</section>
+<!DOCTYPE HTML>
+<html ng-app="dive">
+<head>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.5/angular.js"></script>
+    <script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.4.0.js"></script>
+    <script type="text/javascript" charset="utf-8" src="src/EANx.js"></script>
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+    <script>
+        var dive = angular.module('dive', ['ui.bootstrap']);
+        dive.controller('EANxController', ['$scope', function ($scope) {
+            $scope.profile = { depth: 18, ppo2: 1.4, eanx: .21, abt: 20 };
 
-            <section class="abt">
-				<div class="warning" style="display: none;">
-					Actual Bottom Time exceeds the No Decompression Limit!<br/>
-                    Plan for a <a href="#" onclick="abt(ndl());">shorter</a> dive or choose a more <a href="#" onclick="eanx(EANx.bestMix(ppo2(), depth()));">suitable</a> gas mixture.
-				</div>
-				<label for="abt">abt</label><input type="number" name="abt" value="60" id="abt"> <span class="clock"></span>
-                <div class="slack" style="display: none;">
-                    <a href="#" onclick="maximiseAbt();">Max</a>
-                </div>
-			</section>
+            $scope.calc = function () {
+                $scope.profile.ndl = EANx_js.ndl($scope.profile.depth, $scope.profile.eanx);
+                $scope.profile.mod = EANx_js.mod($scope.profile.ppo2, $scope.profile.eanx);
+                $scope.profile.cns = EANx_js.cns($scope.profile.abt, EANx_js.ppo2($scope.profile.depth, $scope.profile.eanx)) * 100;
+            };
 
-            <section class="ndl">
-				<label for="ndl">ndl</label><input type="number" name="ndl" value="" id="ndl" readonly> <span class="clock"></span>
-			</section>
+            $scope.best_mix = function () {
+                $scope.profile.eanx = EANx_js.best_mix($scope.profile.depth, $scope.profile.ppo2);
+                $scope.calc();
+            };
 
-            <section class="ppo2_at_depth">
-				<label for="ppo2_at_depth">ppo2_at_depth</label><input type="number" name="ppo2_at_depth" value="" id="ppo2_at_depth" readonly>
-			</section>
+            $scope.profile.too_long = function () {
+                return $scope.profile.abt > $scope.profile.ndl;
+            };
 
-            <section class="cnsfrac">
-				<label for="cnsfrac">cns%</label><input type="number" name="cnsfrac" value="" id="cnsfrac" readonly>
-			</section>
-            
-		</div>
-		
-		<div class="gas">
-			<h2>Gas</h2>
-			
-			<section class="ppo2">
-				<a href="#" onclick="ppo2(1.4);">1.4</a> <a href="#" onclick="ppo2(1.6);">1.6</a>
-				<label for="ppo2">ppo2</label><input type="number" name="ppo2" value="1.4" id="ppo2" step="0.1">
-			</section>
-			
-			<section class="eanx">
-                <div class="warning" style="display: none;">
-					Choose a more <a href="#" onclick="eanx(EANx.bestMix(ppo2(), depth()));">suitable</a> gas mixture!
-				</div>
-				<a href="#" onclick="eanx(21);">21</a> <a href="#" onclick="eanx(32);">32</a> <a href="#" onclick="eanx(36);">36</a> <a href="#" onclick="eanx(EANx.bestMix(ppo2(), depth()));">Optimize</a>
-				<label for="eanx">eanx</label><input type="number" name="eanx" value="21" id="eanx">
-			</section>
-			
-			<section class="mod">
-				<label for="mod">mod</label><input type="number" name="mod" value="" id="mod" readonly> m.
-			</section>
-		</div>
-		
-	</body>
+            $scope.profile.too_deep = function () {
+                return $scope.profile.depth > $scope.profile.mod;
+            };
+
+            $scope.profile.remaining_abt = function () {
+                return $scope.profile.abt / $scope.profile.ndl * 100;
+            };
+
+            $scope.profile.remaining_depth = function () {
+                return $scope.profile.depth / $scope.profile.mod * 100;
+            };
+
+            $scope.down = function () {
+                if ($scope.profile.depth > 0) $scope.profile.depth--;
+                $scope.calc();
+            };
+            $scope.up = function () {
+                $scope.profile.depth++;
+                $scope.calc();
+            };
+
+            $scope.less = function () {
+                if ($scope.profile.eanx > 0) $scope.profile.eanx -= 0.01;
+                $scope.calc();
+            };
+            $scope.more = function () {
+                if ($scope.profile.eanx <= 1) $scope.profile.eanx += 0.01;
+                $scope.calc();
+            };
+
+            $scope.shorter = function () {
+                if ($scope.profile.abt > 0) $scope.profile.abt--;
+                $scope.calc();
+            };
+            $scope.longer = function () {
+                $scope.profile.abt++;
+                $scope.calc();
+            };
+
+            $scope.calc();
+        }]);
+    </script>
+    <style>
+        h1 {
+            background-color: #34802b;
+            color: yellow;
+            padding: 15px;
+            text-transform: uppercase;
+        }
+
+        input[type=number] {
+            border: none;
+            -webkit-box-shadow: none;
+            -moz-box-shadow: none;
+            box-shadow: none;
+            width: 100px;
+            height: 50px;
+            font-size: 2.5em;
+            text-align: center;
+        }
+
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+</head>
+<body ng-controller="EANxController" align="center">
+<div>
+    <h2>Recreational</h2>
+
+    <h1>Nitrox</h1>
+
+    <h2>Calculator</h2>
+
+    <fieldset>
+        <label>Depth <span class="label label-warning" ng-show="profile.too_deep()">exceeds Maximum Operating Depth!</span></label>
+        <button class="btn btn-primary" ng-click="down()">-</button>
+        <input type="number" min="0" ng-model="profile.depth" ng-change="calc()"/>
+        <button class="btn btn-primary" ng-click="up()">+</button>
+
+        <label>EANx (MOD: <strong>{{ profile.mod }} meters</strong>)</label>
+        <button class="btn btn-primary" ng-click="less()">-</button>
+        <input type="number" ng-model="profile.eanx" ng-change="calc()" step="0.01"/>
+        <button class="btn btn-primary" ng-click="more()">+</button>
+        <button ng-repeat="eanx in [.21,.32,.36]" type="button" class="btn btn-primary" ng-change="calc()"
+                ng-model="profile.eanx" btn-radio="eanx">{{ eanx }}
+        </button>
+        <button class="btn btn-primary" ng-click="best_mix()">Best Mix</button>
+        <progress percent="profile.remaining_depth()" class="progress-warning progress-striped active"></progress>
+
+        <h5>No Decompression Limit:</h5>
+
+        <h2>{{ profile.ndl }}</h2>
+        <h5>minutes</h5>
+
+        <label>Actual Bottom Time <span class="label label-warning" ng-show="profile.too_long()">exceeds No Decompression Limit!</span></label>
+        <button class="btn btn-primary" ng-click="shorter()">-</button>
+        <input type="number" ng-model="profile.abt" ng-change="calc()"/>
+        <button class="btn btn-primary" ng-click="longer()">+</button>
+        <progress percent="profile.remaining_abt()" class="progress-warning progress-striped active"></progress>
+    </fieldset>
+
+    <fieldset>
+        <div class="btn-group">
+            <h5>CNS%:</h5>
+
+            <h3>{{ profile.cns | number:1 }}%</h3>
+
+            <label>ppO<sub>2</sub> limit</label>
+            <button ng-repeat="ppo2 in [1.4,1.5,1.6]" type="button" class="btn btn-primary" ng-change="calc()"
+                    ng-model="profile.ppo2" btn-radio="ppo2">{{ ppo2 }}
+            </button>
+        </div>
+    </fieldset>
+</div>
+
+</body>
 </html>
